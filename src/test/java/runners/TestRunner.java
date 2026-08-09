@@ -45,7 +45,7 @@ import io.cucumber.testng.AbstractTestNGCucumberTests;
         // TAG CONFIGURATION - Change this to run different test profiles
         // ==============================================================
         // Option 1: Run existing skill service tests (DEFAULT)
-        tags = "@skillservice",
+        tags = "@firstscenario1",
         
         // Option 2: Run existing business hosting tests
         // tags = "@Completeflow",
@@ -80,10 +80,10 @@ import io.cucumber.testng.AbstractTestNGCucumberTests;
                 "json:target/cucumber-reports/cucumber.json",
 
                 // HTML report
-                "html:target/cucumber-reports/cucumber.html",
+             //   "html:target/cucumber-reports/cucumber.html",
 
                 // JUnit XML report
-                "junit:target/cucumber-reports/cucumber.xml",
+             //   "junit:target/cucumber-reports/cucumber.xml",
 
                 // Extent Report Adapter
                 "com.aventstack.extentreports.cucumber.adapter.ExtentCucumberAdapter:"

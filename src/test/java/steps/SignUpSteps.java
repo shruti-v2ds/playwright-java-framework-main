@@ -3,6 +3,7 @@ package steps;
 import framework.core.DriverFactory;
 import framework.managers.PageManager;
 import framework.utils.ExcelUtil;
+import Hooks.TestContextManager;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
@@ -30,6 +31,11 @@ public class SignUpSteps {
         Map<String, String> testData =
           ExcelUtil.getTestDataRow(EXCEL_FILE, EXCEL_SHEET, rowIndex - 1);
     String mobileNumber = testData.get("PhoneNumber");
+    
+    // Store mobile for cleanup
+    TestContextManager.getContext().set("mobileNumber", mobileNumber);
+    System.out.println("[SignUpSteps] Stored mobile for cleanup: " + mobileNumber);
+    
     getPageManager().loginPage().loginWithMockOtp(mobileNumber); 
     }
     
@@ -76,12 +82,40 @@ public class SignUpSteps {
     @When("user fills registration form with data from Excel row {int}")
     public void userFillsRegistrationFormFromExcel(int rowIndex) {
         Map<String, String> testData = ExcelUtil.getTestDataRow(EXCEL_FILE, EXCEL_SHEET, rowIndex - 1);
+        
+        // Store mobile for cleanup
+        String phone = testData.get("PhoneNumber");
+        if (phone != null && !phone.isEmpty()) {
+            TestContextManager.getContext().set("mobileNumber", phone);
+            System.out.println("[SignUpSteps] Stored mobile for cleanup: " + phone);
+        }
+        
         getPageManager().signUpPage().fillRegistrationForm(testData);
     }
 
     @When("user clicks Create Profile button")
     public void userClicksCreateProfileButton() {
         getPageManager().signUpPage().clickCreateProfile();
+    }
+
+    @When("user handles mobile already exists error and logs in from Excel row {int}")
+    public void userHandlesMobileExistsAndLogin(int rowIndex) {
+        Map<String, String> testData = ExcelUtil.getTestDataRow(EXCEL_FILE, EXCEL_SHEET, rowIndex - 1);
+        String phone = testData.get("PhoneNumber");
+        
+        // Store mobile for cleanup
+        if (phone != null && !phone.isEmpty()) {
+            TestContextManager.getContext().set("mobileNumber", phone);
+            System.out.println("[SignUpSteps] Mobile already exists, switching to login: " + phone);
+        }
+        
+        // Check if error message appears
+        String errorMessage = "text='This mobile number is already registered', text='Mobile already exists', text='This mobile already'";
+        if (getPageManager().signUpPage().isVisible(errorMessage)) {
+            System.out.println("[SignUpSteps] Mobile already exists error detected. Proceeding to login...");
+            // Navigate to login and login with the mobile
+            getPageManager().loginPage().loginWithMockOtp(phone);
+        }
     }
 
     @When("user registers from Excel row {int}")
@@ -99,11 +133,8 @@ public class SignUpSteps {
 
     @Then("registration should be successful")
     public void verifyRegistrationSuccess() {
-        String currentUrl = DriverFactory.getPage().url();
-        Assert.assertFalse(
-                currentUrl.contains("signup") && currentUrl.contains("register"),
-                "Expected to navigate away from registration page after successful profile creation"
-        );
+       // getPageManager().signUpPage().verifyProfileNameOnDashboards();
+      getPageManager().signUpPage().verifyRegisterUrl("/register");
     }
 
     // =====================================================

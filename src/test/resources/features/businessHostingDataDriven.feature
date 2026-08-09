@@ -7,7 +7,10 @@ Feature: Register User Business Hosting - Data-Driven Multi-User & Multi-Busines
   Background:
     Given user is on dialinarch landing page
 
-  @DataDriven @MultiUser @MultiBusinessPerUser
+  @DataDriven
+  @MultiUser
+  @MultiBusinessPerUser
+  @NeedsCleanup
   Scenario: Host multiple businesses for multiple users - Data-Driven
     
     # This scenario will be executed once per Excel data row in HostYourBusiness sheet
@@ -27,6 +30,7 @@ Feature: Register User Business Hosting - Data-Driven Multi-User & Multi-Busines
     #    - Navigate back to dashboard
     # 5. After all businesses for user are created, move to next user
     # 6. Each user gets isolated browser session
+    # 7. After each user: Automatic cleanup deletes user (via @After hook)
     
     When data-driven test reads all users from Excel
     And for each user:
@@ -39,7 +43,9 @@ Feature: Register User Business Hosting - Data-Driven Multi-User & Multi-Busines
     And each user should have isolated session
     And no data should leak between users
 
-  @DataDriven @SingleUserMultiBusinessInSession
+  @DataDriven
+  @SingleUserMultiBusinessInSession
+  @NeedsCleanup
   Scenario: Host multiple businesses in single user session - Data-Driven
     
     # This scenario demonstrates one user creating multiple businesses
@@ -54,6 +60,7 @@ Feature: Register User Business Hosting - Data-Driven Multi-User & Multi-Busines
     # 5. Create second business with second profession
     # 6. Continue until all businesses created
     # 7. Final logout
+    # 8. After test: Automatic cleanup deletes user (via @After hook)
     
     When data-driven test reads businesses for a single user from Excel
     And user logs in once with the mobile number
@@ -68,24 +75,32 @@ Feature: Register User Business Hosting - Data-Driven Multi-User & Multi-Busines
     And user should still be logged in after each business
     And session should not be reused across different users
 
-  @DataDriven @SpecificUserMultipleBusiness
+  @DataDriven
+  @SpecificUserMultipleBusiness
+  @NeedsCleanup
   Scenario: Host businesses for a specific user - Data-Driven
     
     # This scenario allows testing a specific user with all their businesses
     # Useful for debugging or testing a particular user's data set
     
     # Example: Test USER001 with all their businesses
+    # After test: Automatic cleanup deletes user (via @After hook)
+    
     When test retrieves all businesses for user "USER001"
     And user logs in with USER001 mobile number from Excel
     Then user should be able to create all USER001 businesses in sequence
     And each business creation should succeed
     And user session should be maintained throughout
 
-  @DataDriven @FirstBusinessOnly
+  @DataDriven
+  @FirstBusinessOnly
+  @NeedsCleanup
   Scenario: Host first business for each user - Data-Driven Subset
     
     # This scenario creates only the first business for each user
     # Useful for quick validation or initial setup
+    
+    # After each user: Automatic cleanup deletes user (via @After hook)
     
     When test retrieves first business for each unique user
     And for each user and their first business:
@@ -98,11 +113,13 @@ Feature: Register User Business Hosting - Data-Driven Multi-User & Multi-Busines
     Then all first businesses should be created
     And test should complete in minimum time
 
-  @DataDriven @ExcelValidation
+  @DataDriven
+  @ExcelValidation
   Scenario: Validate Excel test data structure - Data-Driven
     
     # This scenario validates the Excel file structure before running tests
     # Checks for required columns: UserID, Mobile, Profession, BusinessName, etc.
+    # NOTE: This scenario does NOT need @NeedsCleanup (no user created)
     
     When test validates Excel file structure
     Then Excel should have columns: UserID, Mobile, Profession, BusinessName

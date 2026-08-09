@@ -21,10 +21,10 @@ public class HomeSteps {
         homePage.navigate(ConfigManager.getConfig().baseUrl());
     }
 
-    @When("user navigates to login page")
-    public void userNavigatesToLoginPage() {
-        getPageManager().loginPage().navigateToLogin();
-    }
+    // @When("user navigates to login page")
+    // public void userNavigatesToLoginPage() {
+    //     getPageManager().loginPage().navigateToLogin();
+    // }
 
     @Then("the landing page should be displayed correctly")
     public void verifyLandingPage() {

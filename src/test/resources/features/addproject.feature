@@ -25,6 +25,8 @@ Feature:Add project for Register User and hosted Business
     And user clicks the "Create Vendor Profile" button
   
 
+  @ProjectManagement
+  @NeedsCleanup
   Scenario: Successfully register, host a business, and add a project using Excel data
     When the user clicks the "Add Project" button
     And the user enters project details using Excel row 1

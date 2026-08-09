@@ -106,7 +106,7 @@ public class Hooks {
         }
     }
 
-    @After(order = 0)
+    @After(order = 10)
     public void tearDown(Scenario scenario) {
 
         System.out.println(

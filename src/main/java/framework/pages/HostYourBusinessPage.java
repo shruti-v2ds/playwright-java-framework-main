@@ -20,7 +20,7 @@ public class HostYourBusinessPage extends BasePage {
     private final String NextButtonCat="//button[text()='Next' and @class='px-4 py-2 rounded-lg font-medium text-sm bg-blue-500 text-white hover:bg-blue-600']";
     private final String reviewButton = "//button[text()='Review']";
     private final String createVendorProfileButton = "//button[text()='Create Vendor Profile →']";
-    private final String profileIconButton = "//*[@id=\"root\"]/div[1]/nav/div/div/div/button";
+    private final String profileIconButton = "//*[@id=\"root\"]/div[1]/nav/div/div/div[2]/button";
     private final String ABCIconButton = "//button/div/div/p[contains(text(),'ABC')]";
     private final String hostedBusinessprofileiCon = "//*[@id=\"root\"]/div[1]/div/aside/div/div/div[1]/div/div";
     private final String professionInterior = "(//button/div/div/div[contains(text(),'Interior')])[1]";
@@ -171,13 +171,60 @@ public class HostYourBusinessPage extends BasePage {
 }
 
 public void clickProfession(String profession) {
-    Locator professionButton = page.locator(
-    "(//button/div/div/div[contains(text(),'" + profession + "')])[1]");
-    professionButton.waitFor(new Locator.WaitForOptions()
-            .setState(WaitForSelectorState.VISIBLE));
-    professionButton.click(new Locator.ClickOptions().setTimeout(10000));
-    ExtentReportUtil.attachScreenshot(page, profession + " Profession Clicked");
-    waitForLoadState(LoadState.NETWORKIDLE);
+    try {
+        // Wait for page to be ready
+        page.waitForLoadState(LoadState.NETWORKIDLE);
+        page.waitForTimeout(1000);
+        
+        // Construct XPath for profession button
+        String xpathSelector = "(//button/div/div/div[contains(text(),'" + profession + "')])[1]";
+        
+        System.out.println("[HostYourBusiness] Looking for profession: " + profession);
+        System.out.println("[HostYourBusiness] Using XPath: " + xpathSelector);
+        
+        // Try to find the button with extended timeout
+        Locator professionButton = page.locator(xpathSelector);
+        
+        // First check if element exists
+        if (page.isVisible(xpathSelector)) {
+            System.out.println("[HostYourBusiness] ✓ Profession button found and visible");
+        } else {
+            System.out.println("[HostYourBusiness] ✗ Profession button not visible, attempting scroll");
+            // Try scrolling to make it visible
+            page.evaluate("window.scrollBy(0, 300)");
+            page.waitForTimeout(500);
+        }
+        
+        // Wait for the button to be visible
+        professionButton.waitFor(new Locator.WaitForOptions()
+                .setState(WaitForSelectorState.VISIBLE)
+                .setTimeout(45000)); // Increased timeout to 45 seconds
+        
+        System.out.println("[HostYourBusiness] ✓ Button is now visible, clicking...");
+        professionButton.click(new Locator.ClickOptions().setTimeout(10000));
+        
+        System.out.println("[HostYourBusiness] ✓ Profession button clicked");
+        ExtentReportUtil.attachScreenshot(page, profession + " Profession Clicked");
+        
+        page.waitForLoadState(LoadState.NETWORKIDLE);
+        System.out.println("[HostYourBusiness] ✓ Page loaded after profession selection");
+        
+    } catch (Exception e) {
+        System.err.println("[HostYourBusiness] ✗ Error clicking profession '" + profession + "': " + e.getMessage());
+        
+        // Print debug info
+        try {
+            System.err.println("[HostYourBusiness] Page URL: " + page.url());
+            System.err.println("[HostYourBusiness] Page title: " + page.title());
+            
+            // Take screenshot for debugging
+            ExtentReportUtil.attachScreenshot(page, "ERROR_ProfessionNotFound_" + profession);
+        } catch (Exception ex) {
+            System.err.println("[HostYourBusiness] Could not capture debug info: " + ex.getMessage());
+        }
+        
+        throw e; // Re-throw to fail the test
+    }
 }
 
 public void clickABCIcon() {

@@ -3,6 +3,7 @@ package steps;
 import framework.core.DriverFactory;
 import framework.managers.PageManager;
 import framework.utils.ExcelUtil;
+import Hooks.TestContextManager;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
@@ -63,6 +64,13 @@ public class HostBusinessSteps {
 
         Map<String, String> data =
                 ExcelUtil.getTestDataRow(EXCEL_FILE, EXCEL_SHEET, rowIndex - 1);
+
+        // Store mobile for cleanup
+        String mobile = data.get("Mobile");
+        if (mobile != null && !mobile.isEmpty()) {
+            TestContextManager.getContext().set("mobileNumber", mobile);
+            System.out.println("[HostBusinessSteps] Stored mobile for cleanup: " + mobile);
+        }
 
         getPageManager().hostYourBusinessPage().fillBusinessDetails(data);
     }
@@ -131,8 +139,7 @@ public void user_clicks_the_business_category(String string) {
 
     @Given("userregister hosted the business")
     public void userregisterhostedthebusiness() {
-        getPageManager().signUpPage().navigateToSignUp();
-            
+        getPageManager().signUpPage().navigateToSignUp();      
         getPageManager().signUpPage().completeSignUpWithOtp("1234567890");
         getPageManager().hostYourBusinessPage().clickHostBusiness();
     }
