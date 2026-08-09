@@ -106,6 +106,97 @@ public final class ExcelUtil {
     }
 
     /**
+     * Groups test data by a specified column (typically UserID for multi-user scenarios).
+     * Delegates to TestDataGrouper for the actual grouping logic.
+     *
+     * @param fileName Excel file name (relative to src/test/resources/testdata/)
+     * @param sheetName Name of the sheet to read
+     * @return Map where key=UserID, value=List of business rows for that user
+     */
+    public static java.util.Map<String, java.util.List<java.util.Map<String, String>>> groupByUser(
+        String fileName, String sheetName) {
+        return TestDataGrouper.groupByUser(fileName, sheetName);
+    }
+
+    /**
+     * Gets all unique UserIDs from the test data in order of appearance.
+     * Delegates to TestDataGrouper.
+     *
+     * @param fileName Excel file name
+     * @param sheetName Sheet name
+     * @return List of unique UserIDs in order of first appearance
+     */
+    public static java.util.List<String> getAllUserIds(String fileName, String sheetName) {
+        return TestDataGrouper.getAllUserIds(fileName, sheetName);
+    }
+
+    /**
+     * Gets all business data for a specific UserID.
+     * Delegates to TestDataGrouper.
+     *
+     * @param fileName Excel file name
+     * @param sheetName Sheet name
+     * @param userId The UserID to filter
+     * @return List of business rows for this user
+     */
+    public static java.util.List<java.util.Map<String, String>> getUserData(
+        String fileName, String sheetName, String userId) {
+        return TestDataGrouper.getUserData(fileName, sheetName, userId);
+    }
+
+    /**
+     * Gets a specific business for a user by business index (0-based).
+     * Delegates to TestDataGrouper.
+     *
+     * @param fileName Excel file name
+     * @param sheetName Sheet name
+     * @param userId The UserID
+     * @param businessIndex 0-based index within user's businesses
+     * @return Business data for that user at that index
+     */
+    public static java.util.Map<String, String> getBusinessForUser(
+        String fileName, String sheetName, String userId, int businessIndex) {
+        return TestDataGrouper.getBusinessForUser(fileName, sheetName, userId, businessIndex);
+    }
+
+    /**
+     * Gets the count of businesses for a specific UserID.
+     * Delegates to TestDataGrouper.
+     *
+     * @param fileName Excel file name
+     * @param sheetName Sheet name
+     * @param userId The UserID to check
+     * @return Number of businesses (rows) for this user
+     */
+    public static int getBusinessCountForUser(String fileName, String sheetName, String userId) {
+        return TestDataGrouper.getBusinessCountForUser(fileName, sheetName, userId);
+    }
+
+    /**
+     * Gets total number of unique users in the test data.
+     * Delegates to TestDataGrouper.
+     *
+     * @param fileName Excel file name
+     * @param sheetName Sheet name
+     * @return Number of unique UserIDs
+     */
+    public static int getTotalUserCount(String fileName, String sheetName) {
+        return TestDataGrouper.getTotalUserCount(fileName, sheetName);
+    }
+
+    /**
+     * Gets total number of business records (all users combined).
+     * Delegates to TestDataGrouper.
+     *
+     * @param fileName Excel file name
+     * @param sheetName Sheet name
+     * @return Total business records
+     */
+    public static int getTotalBusinessCount(String fileName, String sheetName) {
+        return TestDataGrouper.getTotalBusinessCount(fileName, sheetName);
+    }
+
+    /**
      * Helper to safely convert a Cell value to String.
      */
     private static String getCellValueAsString(Cell cell) {
