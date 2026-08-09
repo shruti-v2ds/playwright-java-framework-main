@@ -1,0 +1,17 @@
+{
+  "mcpServers": {
+    "github.com/executeautomation/mcp-playwright": {
+      "command": "npx",
+      "args": ["-y", "@executeautomation/playwright-mcp-server"],
+      "disabled": true,
+      "autoApprove": []
+    },
+    "playwright": {
+      "command": "C:\\Program Files\\nodejs\\npx.cmd",
+      "args": ["@playwright/mcp@latest"],
+      "env": { "BROWSER": "chromium" },
+      "disabled": false,
+      "autoApprove": []
+    }
+  }
+}

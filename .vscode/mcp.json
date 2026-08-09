@@ -1,0 +1,21 @@
+{
+  "servers": {
+    "playwright": {
+      "command": "C:\\Program Files\\nodejs\\npx.cmd",
+      "args": [
+        "@playwright/mcp@latest"
+      ],
+      "env": {
+        "BROWSER": "chromium"
+      }
+    },
+    "playwright-test": {
+      "type": "stdio",
+      "command": "npx",
+      "args": [
+        "playwright",
+        "run-test-mcp-server"
+      ]
+    }
+  }
+}
